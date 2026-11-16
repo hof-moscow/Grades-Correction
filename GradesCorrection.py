@@ -1,6 +1,6 @@
 
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTableWidget, QVBoxLayout, QFileDialog,QSpinBox
+from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTableWidget, QVBoxLayout, QFileDialog,QSpinBox,QTableWidgetItem
 
 
 class GradesWindow(QWidget):
@@ -60,6 +60,7 @@ class GradesWindow(QWidget):
         with open("style.qss", "r") as f:
             self.setStyleSheet(f.read())
 
+    
     def choose_file(self):
         file_name, _ = QFileDialog.getOpenFileName(
             self, "Select Grades File", "", "CSV Files (*.csv)"
@@ -68,6 +69,33 @@ class GradesWindow(QWidget):
         if file_name:
             self.selected_file = file_name
             self.file_label.setText(file_name)
+
+            self.student_ids = []
+            self.original_grades = []
+            self.corrected_grades = []
+
+            with open(file_name, "r") as f:
+                next(f) 
+
+                for line in f:
+                    student_id, grade = line.strip().split(",")
+
+                    self.student_ids.append(student_id)
+                    self.original_grades.append(int(grade))
+                    self.corrected_grades.append(int(grade))
+
+            self.bonus_input.setValue(0)
+            self.update_table()
+            self.status_label.setText("File loaded successfully")
+
+
+    def update_table(self):
+        self.table.clearContents()
+
+        for i in range(len(self.student_ids)):
+            self.table.setItem(i, 0, QTableWidgetItem(self.student_ids[i]))
+            self.table.setItem(i, 1, QTableWidgetItem(str(self.original_grades[i])))
+            self.table.setItem(i, 2, QTableWidgetItem(str(self.corrected_grades[i])))
 
 
     def apply_bonus(self):
