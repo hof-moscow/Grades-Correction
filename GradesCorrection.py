@@ -1,6 +1,6 @@
 
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTableWidget, QVBoxLayout, QFileDialog
+from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTableWidget, QVBoxLayout, QFileDialog,QSpinBox
 
 
 class GradesWindow(QWidget):
@@ -31,9 +31,34 @@ class GradesWindow(QWidget):
         self.table.setHorizontalHeaderLabels(
             ["ID", "Original Grades", "Corrected Grades"]
         )
+        self.table.horizontalHeader().setStretchLastSection(True)
+        self.table.setColumnWidth(0, 150)
+        self.table.setColumnWidth(1, 180)
         self.layout.addWidget(self.table)
 
+        # Bonus points
+        self.bonus_label = QLabel("Bonus Points:")
+        self.layout.addWidget(self.bonus_label)
+
+        self.bonus_input = QSpinBox()
+        self.bonus_input.setRange(0, 100)
+        self.bonus_input.setSuffix(" points")
+        self.bonus_input.editingFinished.connect(self.apply_bonus)
+        self.layout.addWidget(self.bonus_input)
+
+        # Update file button
+        self.update_button = QPushButton("Update File")
+        self.update_button.clicked.connect(self.update_file)
+        self.layout.addWidget(self.update_button)
+
+        # Status message
+        self.status_label = QLabel("Select a file to begin")
+        self.layout.addWidget(self.status_label)
+
+
         self.setLayout(self.layout)
+        with open("style.qss", "r") as f:
+            self.setStyleSheet(f.read())
 
     def choose_file(self):
         file_name, _ = QFileDialog.getOpenFileName(
@@ -43,6 +68,14 @@ class GradesWindow(QWidget):
         if file_name:
             self.selected_file = file_name
             self.file_label.setText(file_name)
+
+
+    def apply_bonus(self):
+        self.status_label.setText("Bonus entered. Grades not updated yet.")
+
+    def update_file(self):
+        self.status_label.setText("File update is not implemented yet.")
+
 
 
 if __name__ == "__main__":
