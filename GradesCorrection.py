@@ -2,6 +2,7 @@
 import sys
 import os
 import subprocess
+from About import AboutWindow
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTableWidget, QVBoxLayout, QFileDialog,QSpinBox,QTableWidgetItem
 
 
@@ -13,7 +14,7 @@ class GradesWindow(QWidget):
         self.original_grades = []
         self.corrected_grades = []
         self.selected_file = ""
-
+        self.about_window = AboutWindow()
         self.initUI()
 
     def initUI(self):
@@ -48,15 +49,16 @@ class GradesWindow(QWidget):
         self.bonus_input.editingFinished.connect(self.apply_bonus)
         self.layout.addWidget(self.bonus_input)
 
-        # Update file button
         self.update_button = QPushButton("Update File")
         self.update_button.clicked.connect(self.update_file)
         self.layout.addWidget(self.update_button)
 
-        # Status message
         self.status_label = QLabel("Select a file to begin")
         self.layout.addWidget(self.status_label)
 
+        self.about_button = QPushButton("About")
+        self.about_button.clicked.connect(self.open_about)
+        self.layout.addWidget(self.about_button)
 
         self.setLayout(self.layout)
         with open("style.qss", "r") as f:
@@ -143,7 +145,8 @@ class GradesWindow(QWidget):
         else:
             self.status_label.setText("Please select a file first")
 
-
+    def open_about(self):
+        self.about_window.show()
 
 
 if __name__ == "__main__":
