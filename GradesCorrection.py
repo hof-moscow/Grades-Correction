@@ -98,8 +98,24 @@ class GradesWindow(QWidget):
             self.table.setItem(i, 2, QTableWidgetItem(str(self.corrected_grades[i])))
 
 
+    
     def apply_bonus(self):
-        self.status_label.setText("Bonus entered. Grades not updated yet.")
+        if self.selected_file:
+            bonus = self.bonus_input.value()
+
+            for i in range(len(self.original_grades)):
+                new_grade = self.original_grades[i] + bonus
+
+                if new_grade > 100:
+                    new_grade = 100
+
+                self.corrected_grades[i] = new_grade
+
+            self.update_table()
+            self.status_label.setText("Grades corrected successfully")
+        else:
+            self.status_label.setText("Please select a file first")
+
 
     def update_file(self):
         self.status_label.setText("File update is not implemented yet.")
