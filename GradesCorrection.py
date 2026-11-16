@@ -1,5 +1,7 @@
 
 import sys
+import os
+import subprocess
 from PySide6.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QTableWidget, QVBoxLayout, QFileDialog,QSpinBox,QTableWidgetItem
 
 
@@ -117,8 +119,30 @@ class GradesWindow(QWidget):
             self.status_label.setText("Please select a file first")
 
 
+
     def update_file(self):
-        self.status_label.setText("File update is not implemented yet.")
+        if self.selected_file:
+            with open(self.selected_file, "r") as f:
+                header = f.readline()
+
+            with open(self.selected_file, "w") as f:
+                f.write(header)
+
+                for i in range(len(self.student_ids)):
+                    f.write(f"{self.student_ids[i]},{self.corrected_grades[i]}\n")
+
+            self.status_label.setText("File updated successfully")
+
+            if sys.platform == "win32":
+                os.startfile(self.selected_file)
+            elif sys.platform == "darwin":
+                subprocess.Popen(["open", self.selected_file])
+            else:
+                subprocess.Popen(["xdg-open", self.selected_file])
+
+        else:
+            self.status_label.setText("Please select a file first")
+
 
 
 
